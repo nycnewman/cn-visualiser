@@ -1,2 +1,5 @@
-# cn-visualiser
-POC for a visualiser for Canton Network trasnactions
+# Canton Network Visualiser
+
+POC of Visualiser
+
+
