@@ -174,7 +174,7 @@ const UpdatesListing: React.FC = () => {
                             after_record_time: recordDate.toISOString(),
                             after_migration_id: migration_id
                         },
-                        page_size: 30,
+                        page_size: 100,
                         daml_value_encoding: 'compact_json'
                     };
 
@@ -192,16 +192,16 @@ const UpdatesListing: React.FC = () => {
         fetchData();
     }, [buttonClicked, recordDate]);
 
-    if (loading) {
-        return (
-            <Layout>
-                <p></p>
-                <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                Loading data...<p>If this does not return, check access to Scan UI</p>
-                </Typography>
-            </Layout>
-        ) ;
-    }
+    // if (loading) {
+    //     return (
+    //         <Layout>
+    //             <p></p>
+    //             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+    //             Loading data...<p>If this does not return, check access to Scan UI</p>
+    //             </Typography>
+    //         </Layout>
+    //     ) ;
+    // }
 
     if (error) {
         return (
@@ -270,9 +270,14 @@ const UpdatesListing: React.FC = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {rows && rows.map((row) => (
+                        {loading ? (
+                            <TableRow>
+                                <TableCell colSpan={4} align="center">Loading...</TableCell>
+                            </TableRow>
+                        ) : (
+                        rows && rows.map((row) => (
                             <Row key={row.update_id} row={row} />
-                        ))}
+                        )))}
                     </TableBody>
                 </Table>
             </TableContainer>

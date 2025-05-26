@@ -81,7 +81,7 @@ const TransactionNode = (props: TransactionNodeProps) => {
                 </ul>
                 <div>Exercise Result: </div>
                 <ul>
-                    <Field field={ node.choice_argument } />
+                    <Field field={ node.exercise_result } />
                 </ul>
 
                 <div>Child Events:</div>
