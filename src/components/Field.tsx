@@ -14,8 +14,11 @@ const Field   = (props: FieldProps)=> {
             case 'string':
                 (typeof value) === 'string' && fieldList.push(<li key={t}><em>{t}</em>: { value }</li>)
                 break;
+            case 'boolean':
+                fieldList.push(<li key={t}><em>{t}</em>: { value ? "True" : "False" }</li>)
+                break;
             case 'object':
-                fieldList.push(<li key={t}><em>{t}</em>: <ul><Field field={ props.field[t] as Record<string, unknown>} /></ul></li>)
+                fieldList.push(<li key={t}><em>{t}</em>: <ul><Field field={ value as Record<string, unknown>} /></ul></li>)
                 break;
             default:
                 fieldList.push(<li key={t}>Unknown Field Type</li>)

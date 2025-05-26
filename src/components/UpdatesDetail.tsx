@@ -1,13 +1,19 @@
 import React, {useEffect, useState} from 'react';
-import { getUpdate } from '../utils/updates.tsx';
+import { getUpdate } from '../utils/updates.ts';
 import { useParams } from "react-router-dom";
 import JSONTree from './JSONTree.tsx';
-import MenuBar from "../components/MenuBar.tsx";
 import getErrorMessage from "../utils/errMsg.tsx";
 import RawJSONDisplay from "./RawJSONDisplay.tsx";
 import Transaction from "./Transaction.tsx";
+import Layout from "./Layout.tsx";
+import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
 
-import type { UpdateHistoryItem } from '../utils/updates.tsx';
+
+import type { UpdateHistoryItem } from '../utils/updates.ts';
 
 type RouteParams = {
     update_id: string;
@@ -31,7 +37,7 @@ const UpdatesDetail: React.FC = () => {
                     setData(result);
                 }
             } catch (error) {
-                setError(getErrorMessage(error));
+                setError("ERROR: Error retrieving data from service: " + getErrorMessage(error));
             } finally {
                 setLoading(false);
             }
@@ -42,31 +48,64 @@ const UpdatesDetail: React.FC = () => {
     }, [update_id]);
 
     if (loading) {
-        return <p>Loading data...</p>;
+        return (
+            <Layout>
+            <p>Loading data...</p>
+            </Layout>
+        );
     }
 
     if (error) {
-        return <p>Error: {getErrorMessage(error)}</p>;
+        return (
+            <Layout>
+                <p>Error: {error}</p>
+            </Layout>
+        );
     }
 
     return (
-        <>
-            <MenuBar />
-            <h2>Transaction Details Page</h2>
-            <strong>Details for Update ID: </strong>{update_id}
-            <p></p>
-            {
-                data && (
-                    <>
-                        <JSONTree transaction={data}/>
-                        <Transaction transaction={data}/>
+        <Layout>
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                <strong>Transaction Details Page</strong>
+            </Typography>
+            <Box
+                sx={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    '& > :not(style)': {
+                        m: 1,
+                    },
+                }}
+            >
+                <Paper >
+                    <Card sx={{ minWidth: 275 }}>
+                        <CardContent>
+
+                        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                            <strong>Details for Update ID: </strong>{update_id}
+                        </Typography>
                         <p></p>
-                        <RawJSONDisplay transaction={data}/>
-                    </>
-                )
-            }
-        </>
+                            {
+                                data && (
+                                    <>
+                                        <JSONTree transaction={data}/>
+                                        <Card sx={{ minWidth: 275 }}>
+                                            <CardContent>
+                                        <RawJSONDisplay transaction={data}/>
+                                            </CardContent>
+                                        </Card>
+                                        <Transaction transaction={data}/>
+                                    </>
+                                )
+                            }
+                        </CardContent>
+                    </Card>
+                </Paper>
+            </Box>
+        </Layout>
     );
 }
 
 export default UpdatesDetail;
+
+

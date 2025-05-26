@@ -1,9 +1,8 @@
 import React, {useCallback, useState} from 'react';
 import { Tree } from 'react-d3-tree';
-//import type { components} from '../_openapi/scan';
 import type { Point } from 'react-d3-tree';
 import type { RawNodeDatum, RenderCustomNodeElementFn, CustomNodeElementProps } from 'react-d3-tree';
-import type { TreeEvent, ExercisedEvent, UpdateHistoryItem, UpdateHistoryTransaction} from "../utils/updates.tsx";
+import type { TreeEvent, ExercisedEvent, UpdateHistoryItem, UpdateHistoryTransaction} from "../utils/updates.ts";
 
 //type TreeEvent = components["schemas"]["TreeEvent"];
 //type CreatedEvent = components["schemas"]["CreatedEvent"];

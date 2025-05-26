@@ -5,7 +5,6 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "codegen": "buf generate",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
     "build": "tsc -b && vite build",
@@ -18,15 +17,12 @@
     "@fontsource/roboto": "^5.2.5",
     "@mui/icons-material": "^7.1.0",
     "@mui/material": "^7.1.0",
-    "buf": "^0.1.1",
-    "openapi-fetch": "^0.14.0",
-    "openapi-typescript-fetch": "^2.2.0",
+    "@mui/x-date-pickers": "^8.4.0",
+    "date-fns": "^4.1.0",
     "react": "^19.1.0",
     "react-d3-tree": "^3.6.6",
     "react-dom": "^19.1.0",
-    "react-router-dom": "^7.6.0",
-    "semantic-ui-css": "^2.5.0",
-    "ts-proto": "^2.7.0"
+    "react-router-dom": "^7.6.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
@@ -41,6 +37,7 @@
     "gh-pages": "^6.3.0",
     "globals": "^16.0.0",
     "openapi-typescript": "^7.8.0",
+    "rollup-plugin-visualizer": "^6.0.0",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.30.1",
     "vite": "^6.3.5"
