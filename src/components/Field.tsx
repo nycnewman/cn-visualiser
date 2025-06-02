@@ -1,13 +1,18 @@
 //import { unixTimestampNsToDate } from "../utils/utils";
 
 interface FieldProps {
-    field: Record<string, unknown>;
+    field: Record<string, unknown> | string;
 }
 
 const Field   = (props: FieldProps)=> {
 
+    if (typeof (props.field) === 'string') {
+        return (<li key={props.field}>"{ props.field }"</li>);
+    }
+
     let t: any
     const fieldList = [];
+
     for(t in props.field) {
         const value = props.field[t];
         switch (typeof props.field[t] ) {

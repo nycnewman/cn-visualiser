@@ -1,9 +1,0 @@
-version: v2
-plugins:
-  - local: ./node_modules/ts-proto/protoc-gen-ts_proto
-    out: ./src/_gen
-    opt:
-      - env=browser
-      - globalThisPolyfill=true
-    include_imports: true
-    strategy: all

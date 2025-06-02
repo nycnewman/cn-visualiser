@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import { Link } from 'react-router-dom';
 import getErrorMessage from "../utils/errMsg.tsx";
 import Box from '@mui/material/Box';
@@ -15,6 +15,7 @@ import Paper from '@mui/material/Paper';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import {DateTimePicker} from "@mui/x-date-pickers/DateTimePicker";
+import Button from '@mui/material/Button';
 import Layout from "./Layout.tsx";
 import { RecordDateContext } from "../utils/search-context.tsx";
 import { getUpdates } from "../utils/updates.ts";
@@ -29,6 +30,7 @@ interface rowEventItem {
 
 interface rowType {
     update_id: string;
+    titles: string[];
     migration_id: number;
     record_time: string;
     events: Array<rowEventItem>;
@@ -52,7 +54,7 @@ function Row(props: { row: ReturnType<typeof createData> }) {
                     </IconButton>
                 </TableCell>
                 <TableCell component="th" scope="row">
-                    <Link to={"/cn-visualiser/" + row.update_id}>{row.update_id}</Link>
+                    <Link to={"/cn-visualiser/" + row.update_id}>{row.update_id} </Link><p /> <ul>{row.titles.map((title, index) => { return (<li key={index}>{title}</li>)})}</ul>
                 </TableCell>
                 <TableCell align="right">{row.total_events}</TableCell>
                 <TableCell align="right">{row.migration_id}</TableCell>
@@ -103,6 +105,19 @@ function createData(transaction: UpdateHistoryTransaction ): rowType {
         events.push(data);
     }
 
+    let titles: string[] = [];
+    for (const key2 in transaction.root_event_ids) {
+
+        const data2: TreeEvent = transaction.events_by_id[transaction.root_event_ids[key2]];
+
+        let title: string = data2.template_id.split(':')[2];
+        if (data2.event_type == 'exercised_event') {
+            title = title + " - " + data2.choice;
+        }
+
+        titles.push(title)
+    }
+
     events.sort((a: TreeEvent,b: TreeEvent) => {
         const a_id: number = Number(a.event_id.split(':')[1]);
         const b_id: number = Number(b.event_id.split(':')[1]);
@@ -117,6 +132,7 @@ function createData(transaction: UpdateHistoryTransaction ): rowType {
 
     return {
         update_id: transaction.update_id,
+        titles: titles,
         migration_id: transaction.migration_id,
         record_time: transaction.record_time,
         events: events,
@@ -174,7 +190,7 @@ const UpdatesListing: React.FC = () => {
                             after_record_time: recordDate.toISOString(),
                             after_migration_id: migration_id
                         },
-                        page_size: 100,
+                        page_size: 25,
                         daml_value_encoding: 'compact_json'
                     };
 
@@ -202,14 +218,6 @@ const UpdatesListing: React.FC = () => {
     //         </Layout>
     //     ) ;
     // }
-
-    if (error) {
-        return (
-            <Layout>
-                <p>Errors occurred: {error}</p>
-            </Layout>
-        );
-    }
 
     let rows: rowType[];
     if (data) {
@@ -241,6 +249,13 @@ const UpdatesListing: React.FC = () => {
         }
     };
 
+    const handleNextPage = () => {
+        if (data != undefined) {
+            updateState({ recordDate: new Date( (data[data.length - 1].record_time).toString()) });
+            setButtonClicked(true);
+        }
+    };
+
     return (
         <Layout>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
@@ -257,27 +272,40 @@ const UpdatesListing: React.FC = () => {
                     ampm={false}
                     format="yyyy-MM-dd HH:mm:ss"
                 />
+                &nbsp;&nbsp;
+                <Button variant="contained" onClick={handleNextPage} >Next Page</Button>
             </Typography>
             <TableContainer component={Paper}>
                 <Table aria-label="collapsible table">
                     <TableHead>
                         <TableRow>
                             <TableCell />
-                            <TableCell>Update ID#</TableCell>
+                            <TableCell>Update ID# <p/><ul><li>Root Events</li></ul> </TableCell>
                             <TableCell align="right">Event Count</TableCell>
                             <TableCell align="right">Migration ID</TableCell>
                             <TableCell align="right">Date</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {loading ? (
-                            <TableRow>
-                                <TableCell colSpan={4} align="center">Loading...</TableCell>
-                            </TableRow>
-                        ) : (
-                        rows && rows.map((row) => (
-                            <Row key={row.update_id} row={row} />
-                        )))}
+                        {
+                            loading && (
+                                <TableRow>
+                                    <TableCell colSpan={4} align="center">Loading...</TableCell>
+                                </TableRow>
+                            )
+                        }
+                        {
+                            error && (
+                                <TableRow>
+                                    <TableCell colSpan={4} align="center">ERROR: Error occurred: ... {error} </TableCell>
+                                </TableRow>
+                            )
+                        }
+                        {
+                            rows && rows.map((row) => (
+                                <Row key={row.update_id} row={row} />
+                            ))
+                        }
                     </TableBody>
                 </Table>
             </TableContainer>

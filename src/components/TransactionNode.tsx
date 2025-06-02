@@ -24,6 +24,7 @@ const TransactionNode = (props: TransactionNodeProps) => {
                 <CardContent>
                     <div><strong>"{props.id}": {node.event_type}  </strong></div>
                     <div>Package: {node.template_id}</div>
+                    <div>Created At: {node.created_at}</div>
                     <div>Signatories:</div>
                     <ul>
                         {node.signatories.length==0 && <li>None</li>}

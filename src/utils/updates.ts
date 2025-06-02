@@ -30,7 +30,7 @@ export async function getUpdate (update_id: string): Promise<UpdateHistoryItem>{
             headers: {
                 "Accept": "application/json"
             },
-            signal: AbortSignal.timeout(5000)
+            signal: AbortSignal.timeout(10000)
         }
         //,
         //use: [...] // middlewares
@@ -52,45 +52,41 @@ export async function getUpdates (params: paths['/v1/updates']['post']['requestB
 
     const fetcher = Fetcher.for<paths>();
 
-    try {
-
-        fetcher.configure({
-            baseUrl: 'https://scan.sv-2.global.canton.network.digitalasset.com/api/scan',
-            init: {
-                headers: {
-                    "Accept": "application/json"
-                },
-                body: JSON.stringify(params),
-                signal: AbortSignal.timeout(5000)
+    fetcher.configure({
+        baseUrl: 'https://scan.sv-2.global.canton.network.digitalasset.com/api/scan',
+        init: {
+            headers: {
+                "Accept": "application/json"
             },
-            //,
-            //use: [...] // middlewares
-        })
+            body: JSON.stringify(params),
+            signal: AbortSignal.timeout(10000)
+        },
+        //,
+        //use: [...] // middlewares
+    })
 
-        const apiEndpoint = fetcher
-            .path('/v1/updates')
-            .method('post')
-            .create();
+    const apiEndpoint = fetcher
+        .path('/v1/updates')
+        .method('post')
+        .create();
 
-        try {
-            const {data} = await apiEndpoint(params);
-            if (data) {
-                return data.transactions;
+    try {
+        const {data} = await apiEndpoint(params);
+        if (data) {
+            return data.transactions;
+        }
+    } catch (e) {
+        console.error('An error occurred:', e);
+        if (e instanceof apiEndpoint.Error) {
+        // get discriminated union { status, data }
+            const error = e.getActualType()
+            console.error('Error getting updates:', error);
+            if (error.status === 400) {
+                console.error(error.data); // only available for a 400 response
+            } else if (error.status === 500) {
+                console.error(error.data); // only available for a 500 response
             }
-        } catch(e) {
-            if (e instanceof apiEndpoint.Error) {
-                // get discriminated union { status, data }
-                const error = e.getActualType()
-                console.error('Error getting updates:', error);
-                if (error.status === 400) {
-                    console.error(error.data); // only available for a 400 response
-                } else if (error.status === 500) {
-                    console.error(error.data); // only available for a 500 response
-                }
-            }
-        };
-    } catch (error) {
-        console.error('An error occurred:', error);
-        throw error;
+        }
+        throw e;
     }
 }
